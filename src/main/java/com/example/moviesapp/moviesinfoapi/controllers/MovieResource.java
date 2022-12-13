@@ -2,6 +2,7 @@ package com.example.moviesapp.moviesinfoapi.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,17 +18,19 @@ import com.example.moviesapp.moviesinfoapi.models.Movie_Item;
 @RequestMapping("/movie")
 public class MovieResource {
 
-    // @Value("${api.key}")
-    // private String api_key;
+    @Value("${api.key}")
+    private String api_key;
 
     @Autowired
     private RestTemplate rest;
 
-    @GetMapping("/{movieid}")
+    @GetMapping("/{movieid}")   //making a call to external api for real time movies data
     public Movie getTheMovieDetails(@PathVariable(name = "movieid") String id){
         try{
-            Movie_Item mv=rest.getForObject("https://api.themoviedb.org/3/movie/550?api_key=e8fe6ddd609a0cd1b1392c37100224ca", Movie_Item.class);
+           System.out.println("int get of movie details");
+           Movie_Item mv=rest.getForObject("https://api.themoviedb.org/3/movie/"+id+"?api_key="+api_key, Movie_Item.class);
            // https://api.themoviedb.org/3/movie/550?api_key=e8fe6ddd609a0cd1b1392c37100224ca
+
             return new Movie(id,mv.getTitle(),mv.getOverview());
         }
          catch (Exception e) {
@@ -38,3 +41,10 @@ public class MovieResource {
      return null; 
     }
 }
+
+
+/*
+ *  Movie_Item mv=rest.getForObject("https://api.themoviedb.org/3/movie/550?api_key=e8fe6ddd609a0cd1b1392c37100224ca", Movie_Item.class);
+           // https://api.themoviedb.org/3/movie/550?api_key=e8fe6ddd609a0cd1b1392c37100224ca
+            return new Movie(id,mv.getTitle(),mv.getOverview());
+ */
